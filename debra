@@ -2,13 +2,12 @@
 
 # Função para exibir uma mensagem de boas-vindas
 function Show-WelcomeMessage {
-    Write-Host "Bem-vindo ao ambiente PowerShell personalizado!" -ForegroundColor Green
+    Write-Host "Ambiente Debra para Windows" -ForegroundColor Green
 }
 
 # Definir aliases e suas descrições
-Set-Alias -Name ll -Value Get-ChildItem
-Set-Alias -Name ls -Value Get-ChildItem
-Set-Alias -Name cat -Value Get-Content
+# Set-Alias -Name ll -Value Get-ChildItem
+
 
 # Mostrar a porta RDP configurada
 function Show-RDPPort {
@@ -19,11 +18,7 @@ function Show-RDPPort {
 
 # Exibir o menu com os aliases
 function Show-Menu {
-    Write-Host "Menu de Aliases Disponíveis:" -ForegroundColor Cyan
-    Write-Host "1. ll - Listar itens do diretório atual (Get-ChildItem)"
-    Write-Host "2. ls - Listar itens do diretório atual (Get-ChildItem)"
-    Write-Host "3. cat - Mostrar o conteúdo de um arquivo (Get-Content)"
-    Write-Host "4. Show-RDPPort - Mostrar a porta RDP configurada"
+    Write-Host "1. Show-RDPPort - Mostrar a porta RDP configurada"
 }
 
 # Executar a função de boas-vindas
