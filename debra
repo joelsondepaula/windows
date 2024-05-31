@@ -13,7 +13,7 @@ function Show-WelcomeMessage {
 function Show-RDPPort {
     $rdpInfo = Get-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "PortNumber"
     $rdpPort = $rdpInfo.PortNumber
-    Write-Host "A porta RDP configurada é: $rdpPort" -ForegroundColor Yellow
+    Write-Host "Informações RDP: $rdpInfo" -ForegroundColor Yellow
 }
 
 # Exibir o menu com os aliases
