@@ -5,19 +5,17 @@ function Show-WelcomeMessage {
     Write-Host "Ambiente Debra para Windows" -ForegroundColor Green
 }
 
-# Definir aliases e suas descrições
-# Set-Alias -Name ll -Value Get-ChildItem
-
-
 # Mostrar a porta RDP configurada
 function Show-RDPInfo {
     $rdpInfo = Get-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "PortNumber"
-    $rdpPort = $rdpInfo.PortNumber
-    Write-Host "Informações RDP: $rdpInfo" -ForegroundColor Yellow
+    $rdpPort = [System.BitConverter]::ToUInt16([System.BitConverter]::GetBytes($rdpInfo.PortNumber), 0)
+    Write-Host "Informações RDP:" -ForegroundColor Yellow
+    Write-Host "Porta RDP Configurada: $rdpPort" -ForegroundColor Yellow
 }
 
 # Exibir o menu com os aliases
 function Show-Menu {
+    Write-Host "Menu de Aliases Disponíveis:" -ForegroundColor Cyan
     Write-Host "1. Show-RDPInfo - Mostrar configurações RDP"
 }
 
