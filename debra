@@ -22,6 +22,22 @@ function Show-Menu {
     Write-Host "1. Show-RDPPort - Mostrar a porta RDP configurada"
 }
 
+# Função para exibir informações do sistema
+function Show-SystemInfo {
+    $sysInfo = @{
+        "Hostname" = (hostname)
+        "Versão do Kernel" = (Get-WmiObject Win32_OperatingSystem).Version
+        "Arquitetura do Sistema" = (Get-WmiObject Win32_OperatingSystem).OSArchitecture
+        "Memória Total (GB)" = "{0:N2}" -f ((Get-WmiObject Win32_OperatingSystem).TotalVisibleMemorySize / 1GB)
+        "Processador" = (Get-WmiObject Win32_Processor).Name
+    }
+
+    Write-Host "Informações do Sistema:" -ForegroundColor Yellow
+    foreach ($info in $sysInfo.GetEnumerator()) {
+        Write-Host "$($info.Key): $($info.Value)"
+    }
+}
+
 # Executar a função de boas-vindas
 Show-WelcomeMessage
 
