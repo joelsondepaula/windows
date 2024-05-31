@@ -20,6 +20,7 @@ function Show-RDPPort {
 function Show-Menu {
     Write-Host "Menu de Aliases Disponíveis:" -ForegroundColor Cyan
     Write-Host "1. Show-RDPPort - Mostrar a porta RDP configurada"
+    Write-Host "2. Show-SystemInfo - Mostrar a porta RDP configurada"
 }
 
 # Função para exibir informações do sistema
