@@ -1,1 +1,6 @@
 $rdpInfo = Get-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "PortNumber"
+
+
+function Show-WelcomeMessage {
+    Write-Host "Bem-vindo ao ambiente PowerShell personalizado!" -ForegroundColor Green
+}
