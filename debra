@@ -2,21 +2,24 @@
 
 # Função para exibir uma mensagem de boas-vindas
 function Show-WelcomeMessage {
-    Write-Host "Ambiente Debra para Windows" -ForegroundColor Green
+    Write-Host "Ambiente massinha para Windows" -ForegroundColor Green
 }
 
-# Função para mostrar as informações da porta RDP
-function Show-RDPInfo {
+# Definir aliases e suas descrições
+#Set-Alias -Name ll -Value Get-ChildItem
+
+
+# Mostrar a porta RDP configurada
+function Show-RDPPort {
     $rdpInfo = Get-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "PortNumber"
-    $rdpPort = [System.BitConverter]::ToUInt16([System.BitConverter]::GetBytes($rdpInfo.PortNumber), 0)
-    Write-Host "Informações RDP:" -ForegroundColor Yellow
-    Write-Host "Porta RDP Configurada: $rdpPort" -ForegroundColor Yellow
+    $rdpPort = $rdpInfo.PortNumber
+    Write-Host "A porta RDP configurada é: $rdpPort" -ForegroundColor Yellow
 }
 
 # Exibir o menu com os aliases
 function Show-Menu {
     Write-Host "Menu de Aliases Disponíveis:" -ForegroundColor Cyan
-    Write-Host "1. Show-RDPInfo - Mostrar configurações RDP"
+    Write-Host "1. Show-RDPPort - Mostrar a porta RDP configurada"
 }
 
 # Executar a função de boas-vindas
