@@ -1,6 +1,33 @@
-$rdpInfo = Get-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "PortNumber"
+# Script: debra.ps1
 
-
+# Função para exibir uma mensagem de boas-vindas
 function Show-WelcomeMessage {
     Write-Host "Bem-vindo ao ambiente PowerShell personalizado!" -ForegroundColor Green
 }
+
+# Definir aliases e suas descrições
+Set-Alias -Name ll -Value Get-ChildItem
+Set-Alias -Name ls -Value Get-ChildItem
+Set-Alias -Name cat -Value Get-Content
+
+# Mostrar a porta RDP configurada
+function Show-RDPPort {
+    $rdpInfo = Get-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "PortNumber"
+    $rdpPort = $rdpInfo.PortNumber
+    Write-Host "A porta RDP configurada é: $rdpPort" -ForegroundColor Yellow
+}
+
+# Exibir o menu com os aliases
+function Show-Menu {
+    Write-Host "Menu de Aliases Disponíveis:" -ForegroundColor Cyan
+    Write-Host "1. ll - Listar itens do diretório atual (Get-ChildItem)"
+    Write-Host "2. ls - Listar itens do diretório atual (Get-ChildItem)"
+    Write-Host "3. cat - Mostrar o conteúdo de um arquivo (Get-Content)"
+    Write-Host "4. Show-RDPPort - Mostrar a porta RDP configurada"
+}
+
+# Executar a função de boas-vindas
+Show-WelcomeMessage
+
+# Exibir o menu
+Show-Menu
