@@ -5,7 +5,7 @@ function Show-WelcomeMessage {
     Write-Host "Ambiente Debra para Windows" -ForegroundColor Green
 }
 
-# Mostrar a porta RDP configurada
+# Função para mostrar as informações da porta RDP
 function Show-RDPInfo {
     $rdpInfo = Get-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "PortNumber"
     $rdpPort = [System.BitConverter]::ToUInt16([System.BitConverter]::GetBytes($rdpInfo.PortNumber), 0)
