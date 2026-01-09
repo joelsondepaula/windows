@@ -1,46 +1,53 @@
 # Script: debra.ps1
 
-# Função para exibir uma mensagem de boas-vindas
 function Show-WelcomeMessage {
-    Write-Host "Ambiente massinha para Windows" -ForegroundColor Green
+    Write-Host "`nAmbiente massinha para Windows" -ForegroundColor Green
 }
 
-# Definir aliases e suas descrições
-#Set-Alias -Name ll -Value Get-ChildItem
-
-
-# Mostrar a porta RDP configurada
 function Show-RDPPort {
-    $rdpInfo = Get-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "PortNumber"
-    $rdpPort = $rdpInfo.PortNumber
-    Write-Host "A porta RDP configurada é: $rdpPort" -ForegroundColor Yellow
+    $rdpInfo = Get-ItemProperty `
+        -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' `
+        -Name "PortNumber"
+
+    Write-Host "`nA porta RDP configurada é: $($rdpInfo.PortNumber)" -ForegroundColor Yellow
 }
 
-# Exibir o menu com os aliases
-function Show-Menu {
-    Write-Host "Menu de Aliases Disponíveis:" -ForegroundColor Cyan
-    Write-Host "1. Show-RDPPort - Mostrar a porta RDP configurada"
-    Write-Host "2. Show-SystemInfo - Mostrar a porta RDP configurada"
-}
-
-# Função para exibir informações do sistema
 function Show-SystemInfo {
-    $sysInfo = @{
-        "Hostname" = (hostname)
-        "Versão do Kernel" = (Get-WmiObject Win32_OperatingSystem).Version
-        "Arquitetura do Sistema" = (Get-WmiObject Win32_OperatingSystem).OSArchitecture
-        "Memória Total (GB)" = "{0:N2}" -f ((Get-WmiObject Win32_OperatingSystem).TotalVisibleMemorySize / 1GB)
-        "Processador" = (Get-WmiObject Win32_Processor).Name
-    }
+    $os = Get-CimInstance Win32_OperatingSystem
+    $cpu = Get-CimInstance Win32_Processor
 
-    Write-Host "Informações do Sistema:" -ForegroundColor Yellow
-    foreach ($info in $sysInfo.GetEnumerator()) {
-        Write-Host "$($info.Key): $($info.Value)"
-    }
+    Write-Host "`nInformações do Sistema:" -ForegroundColor Yellow
+    Write-Host "Hostname: $env:COMPUTERNAME"
+    Write-Host "Versão do Kernel: $($os.Version)"
+    Write-Host "Arquitetura: $($os.OSArchitecture)"
+    Write-Host "Memória Total (GB): {0:N2}" -f ($os.TotalVisibleMemorySize / 1GB)
+    Write-Host "Processador: $($cpu.Name)"
 }
 
-# Executar a função de boas-vindas
-Show-WelcomeMessage
+function Show-Menu {
+    Write-Host "`nMenu de Opções:" -ForegroundColor Cyan
+    Write-Host "1 - Mostrar porta RDP"
+    Write-Host "2 - Informações do sistema"
+    Write-Host "0 - Sair"
+}
 
-# Exibir o menu
-Show-Menu
+function Start-Debra {
+    Show-WelcomeMessage
+
+    while ($true) {
+        Show-Menu
+        $option = Read-Host "Escolha uma opção"
+
+        switch ($option) {
+            "1" { Show-RDPPort }
+            "2" { Show-SystemInfo }
+            "0" {
+                Write-Host "Saindo do ambiente..." -ForegroundColor Red
+                break
+            }
+            default {
+                Write-Host "Opção inválida!" -ForegroundColor Red
+            }
+        }
+    }
+}
