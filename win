@@ -1,53 +1,75 @@
 # Script: debra.ps1
 
+# Função para exibir uma mensagem de boas-vindas
 function Show-WelcomeMessage {
-    Write-Host "`nAmbiente massinha para Windows" -ForegroundColor Green
+    Clear-Host
+    Write-Host "==============================" -ForegroundColor Green
+    Write-Host " Ambiente Massinha para Windows" -ForegroundColor Green
+    Write-Host "==============================" -ForegroundColor Green
+    Write-Host ""
 }
 
+# Mostrar a porta RDP configurada
 function Show-RDPPort {
-    $rdpInfo = Get-ItemProperty `
-        -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' `
-        -Name "PortNumber"
-
-    Write-Host "`nA porta RDP configurada é: $($rdpInfo.PortNumber)" -ForegroundColor Yellow
-}
-
-function Show-SystemInfo {
-    $os = Get-CimInstance Win32_OperatingSystem
-    $cpu = Get-CimInstance Win32_Processor
-
-    Write-Host "`nInformações do Sistema:" -ForegroundColor Yellow
-    Write-Host "Hostname: $env:COMPUTERNAME"
-    Write-Host "Versão do Kernel: $($os.Version)"
-    Write-Host "Arquitetura: $($os.OSArchitecture)"
-    Write-Host "Memória Total (GB): {0:N2}" -f ($os.TotalVisibleMemorySize / 1GB)
-    Write-Host "Processador: $($cpu.Name)"
-}
-
-function Show-Menu {
-    Write-Host "`nMenu de Opções:" -ForegroundColor Cyan
-    Write-Host "1 - Mostrar porta RDP"
-    Write-Host "2 - Informações do sistema"
-    Write-Host "0 - Sair"
-}
-
-function Start-Debra {
-    Show-WelcomeMessage
-
-    while ($true) {
-        Show-Menu
-        $option = Read-Host "Escolha uma opção"
-
-        switch ($option) {
-            "1" { Show-RDPPort }
-            "2" { Show-SystemInfo }
-            "0" {
-                Write-Host "Saindo do ambiente..." -ForegroundColor Red
-                break
-            }
-            default {
-                Write-Host "Opção inválida!" -ForegroundColor Red
-            }
-        }
+    try {
+        $rdpInfo = Get-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "PortNumber" -ErrorAction Stop
+        $rdpPort = $rdpInfo.PortNumber
+        Write-Host "Checking RDP..." -ForegroundColor DarkGray
+        Write-Host "A porta RDP configurada é: $rdpPort" -ForegroundColor Yellow
+    }
+    catch {
+        Write-Host "Erro ao ler porta RDP. Verifique se tem permissão de Admin." -ForegroundColor Red
     }
 }
+
+# Função para exibir informações do sistema
+function Show-SystemInfo {
+    # Correção do cálculo de memória (KB para GB)
+    $memoria = (Get-WmiObject Win32_OperatingSystem).TotalVisibleMemorySize
+    $memoriaGB = "{0:N2}" -f ($memoria / 1MB)
+
+    $sysInfo = @{
+        "Hostname"               = (hostname)
+        "Versão do Kernel"       = (Get-WmiObject Win32_OperatingSystem).Version
+        "Arquitetura"            = (Get-WmiObject Win32_OperatingSystem).OSArchitecture
+        "Memória Total (GB)"     = $memoriaGB
+        "Processador"            = (Get-WmiObject Win32_Processor).Name
+    }
+
+    Write-Host "Informações do Sistema:" -ForegroundColor Yellow
+    foreach ($key in $sysInfo.Keys) {
+        Write-Host "$($key): $($sysInfo[$key])"
+    }
+}
+
+# Exibir o menu e capturar a escolha
+function Start-MenuLoop {
+    Show-WelcomeMessage
+    
+    do {
+        Write-Host "`nMenu de Opções:" -ForegroundColor Cyan
+        Write-Host "1. Mostrar porta RDP"
+        Write-Host "2. Mostrar Informações do Sistema"
+        Write-Host "Q. Sair"
+        
+        $choice = Read-Host "`nDigite a opção desejada"
+
+        switch ($choice) {
+            '1' { Show-RDPPort }
+            '2' { Show-SystemInfo }
+            'q' { Write-Host "Saindo do ambiente..." -ForegroundColor Gray; break }
+            'Q' { Write-Host "Saindo do ambiente..." -ForegroundColor Gray; break }
+            default { Write-Host "Opção inválida. Tente novamente." -ForegroundColor Red }
+        }
+        
+        if ($choice -ne 'q') {
+            Write-Host "`nPressione qualquer tecla para voltar ao menu..." -ForegroundColor DarkGray
+            [void][System.Console]::ReadKey()
+            Show-WelcomeMessage
+        }
+
+    } until ($choice -eq 'q' -or $choice -eq 'Q')
+}
+
+# Iniciar o Loop do Menu
+Start-MenuLoop
